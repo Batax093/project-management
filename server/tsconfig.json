@@ -10,6 +10,6 @@
       "skipLibCheck": true,
       "forceConsistentCasingInFileNames": true
     },
-    "include": ["src/**/*", "app.ts", "prisma/**/*", "src/data/**/*"],
+    "include": ["src/**/*", "src/app.ts", "prisma/**/*", "src/data/**/*"],
     "exclude": ["node_modules"]
 }

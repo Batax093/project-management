@@ -3,6 +3,7 @@
 
 import { useAppDispatch, useAppSelector } from "@/app/redux";
 import { setIsSidebarCollapse } from "@/state";
+import { useGetProjectsQuery } from "@/state/api";
 import {
   AlertCircle,
   AlertOctagon,
@@ -30,6 +31,7 @@ const Sidebar = () => {
   const [showProjects, setShowProjects] = useState(true);
   const [showPriority, setShowPriority] = useState(true);
 
+  const { data: project } = useGetProjectsQuery();
   const dispatch = useAppDispatch();
   const isSidebarCollapse = useAppSelector((state) => state.global.isSidebarCollapse);
 
@@ -105,13 +107,24 @@ const Sidebar = () => {
           />
         </nav>
 
-        {/* PROJECTS LIST */}
+        {/* PROJECT LINKS */}
         <button
           onClick={() => setShowProjects((prev) => !prev)}
           className="flex w-full items-center justify-between px-8 py-3 text-gray-500">
           <span className="">Projects</span>
           {showProjects ? <ChevronUp className="h-5 w-5 " /> : <ChevronDown className="h-5 w-5" />}
         </button>
+
+        {/* PROJECTS LIST */}
+        {showProjects &&
+          project?.map((project) => (
+            <SidebarLink
+              key={project.id}
+              icon={Briefcase}
+              label={project.name}
+              href={`/projects/${project.id}`}
+            />
+          ))}
 
         {/* PRIORITY LIST */}
         <button
