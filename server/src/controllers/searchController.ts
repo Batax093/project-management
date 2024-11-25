@@ -9,14 +9,8 @@ export const search = async (req: Request, res: Response): Promise<void> => {
     const tasks = await prisma.task.findMany({
       where: {
         OR: [
-          {
-            title: {
-              contains: query as string,
-            },
-            description: {
-              contains: query as string,
-            },
-          },
+          { title: { contains: query as string } },
+          { description: { contains: query as string } },
         ],
       },
     });
@@ -24,33 +18,21 @@ export const search = async (req: Request, res: Response): Promise<void> => {
     const projects = await prisma.project.findMany({
       where: {
         OR: [
-          {
-            name: {
-              contains: query as string,
-            },
-          },
-          {
-            description: {
-              contains: query as string,
-            },
-          },
+          { name: { contains: query as string } },
+          { description: { contains: query as string } },
         ],
       },
     });
 
     const users = await prisma.user.findMany({
       where: {
-        OR: [
-          {
-            username: {
-              contains: query as string,
-            },
-          },
-        ],
+        OR: [{ username: { contains: query as string } }],
       },
     });
     res.json({ tasks, projects, users });
   } catch (error: any) {
-    res.status(500).json({ message: `Error performing search: ${error.message}` });
+    res
+      .status(500)
+      .json({ message: `Error performing search: ${error.message}` });
   }
 };
