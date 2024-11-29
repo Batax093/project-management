@@ -67,10 +67,17 @@ export interface SearchResults {
   users?: User[];
 }
 
+export interface Team {
+  teamId: number;
+  teamName: string;
+  productOwnerUserId?: number;
+  projectManagerUserId?: number;
+}
+
 export const api = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL }),
   reducerPath: "api",
-  tagTypes: ["Projects", "Tasks"],
+  tagTypes: ["Projects", "Tasks", "Users", "Teams"],
   endpoints: (build) => ({
     getProjects: build.query<Project[], void>({
       query: () => "/projects",
@@ -96,27 +103,40 @@ export const api = createApi({
       }),
       invalidatesTags: ["Tasks"],
     }),
-    updateTaskStatus: build.mutation<Task, {taskId: number; status: string}>({
-        query: ({ taskId, status }) => ({
-            url: `tasks/${taskId}/status`,
-            method: "PATCH",
-            body: { status },
-        }),
-        invalidatesTags: (result, error, { taskId }) => [
-            { type: "Tasks", id: taskId },
-        ],
+    updateTaskStatus: build.mutation<Task, { taskId: number; status: string }>({
+      query: ({ taskId, status }) => ({
+        url: `tasks/${taskId}/status`,
+        method: "PATCH",
+        body: { status },
+      }),
+      invalidatesTags: (result, error, { taskId }) => [{ type: "Tasks", id: taskId }],
     }),
     search: build.query<SearchResults, string>({
       query: (query) => `search?query=${query}`,
-    })
+    }),
+    getUsers: build.query<User[], void>({
+      query: () => "users",
+      providesTags: ["Users"],
+    }),
+    getTeams: build.query<Team[], void>({
+      query: () => "teams",
+      providesTags: ["Teams"],
+    }),
+    getTasksByUser: build.query<Task[], number>({
+      query: (userId) => `tasks/user/${userId}`,
+      providesTags: (result, error, userId) => result ? result.map(({ id }) => ({ type: "Tasks", id})) : [{ type: "Tasks", id: userId }],
+    }),
   }),
 });
 
-export const { 
-    useGetProjectsQuery, 
-    useCreateProjectMutation, 
-    useGetTasksQuery, 
-    useCreateTaskMutation,
-    useUpdateTaskStatusMutation,
-    useSearchQuery
+export const {
+  useGetProjectsQuery,
+  useCreateProjectMutation,
+  useGetTasksQuery,
+  useCreateTaskMutation,
+  useUpdateTaskStatusMutation,
+  useSearchQuery,
+  useGetUsersQuery,
+  useGetTeamsQuery,
+  useGetTasksByUserQuery,
 } = api;
