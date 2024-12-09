@@ -46,7 +46,7 @@ Make sure you have the following installed:
 3. Set up the environment variables: Create a .env file in the root directory and add the following:
    ```bash
    DATABASE_URL=postgresql://<username>:<password>@<host>:<port>/<database>
-   JWT_SECRET=your_jwt_secret
+   NODE_ENV=development
 
 4. Set up the database:
    ```bash
